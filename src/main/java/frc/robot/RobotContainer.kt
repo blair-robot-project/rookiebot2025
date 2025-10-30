@@ -1,12 +1,14 @@
 package frc.robot
 
+import com.studica.frc.AHRS
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.robot.Constants.OperatorConstants
 import frc.robot.commands.Autos
 import frc.robot.commands.ExampleCommand
 import frc.robot.subsystems.ExampleSubsystem
-
+import frc.robot.commands.SwerveDriveCommand
+import frc.robot.subsystems.SwerveDriveSubsytem
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the [Robot]
@@ -22,7 +24,9 @@ object RobotContainer
 {
     // Replace with CommandPS4Controller or CommandJoystick if needed
     private val driverController = CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT)
-        
+    private val ahrs = AHRS(AHRS.NavXComType.kUSB1)
+    val drive = SwerveDriveSubsytem(ahrs)
+    val driveCommand = SwerveDriveCommand(drive,ahrs,driverController)
     init
     {
         configureBindings()
@@ -45,5 +49,6 @@ object RobotContainer
         // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
         // cancelling on release.
         driverController.b().whileTrue(ExampleSubsystem.exampleMethodCommand())
+        driveCommand.schedule()
     }
 }

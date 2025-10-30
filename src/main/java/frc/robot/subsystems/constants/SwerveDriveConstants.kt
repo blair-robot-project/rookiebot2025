@@ -4,8 +4,17 @@ import edu.wpi.first.math.geometry.Translation2d
 
 object SwerveDriveConstants {
     //NUMS NOT FINALIZED.
-    val m_frontLeftLocation = Translation2d(0.351,0.351);
-    val m_frontRightLocation = Translation2d(-0.351,0.351);
-    val m_backLeftLocation = Translation2d(0.351,-0.351);
-    val m_backRightLocation = Translation2d(-0.351,0.351);
+    val m_frontLeftLocation = Translation2d(0.351,0.351)
+    val m_frontRightLocation = Translation2d(-0.351,0.351)
+    val m_backLeftLocation = Translation2d(0.351,-0.351)
+    val m_backRightLocation = Translation2d(-0.351,0.351)
+
+    const val frontLeftMotorID = 1
+    const val frontRightMotorID = 2
+    const val backLeftMotorID = 3
+    const val backRightMotorID = 4
+
+    const val kp = 1.0
+    const val ki = 1.0
+    const val kd = 1.0
 }
