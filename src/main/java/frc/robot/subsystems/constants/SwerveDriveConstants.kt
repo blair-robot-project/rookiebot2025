@@ -17,4 +17,8 @@ object SwerveDriveConstants {
     const val kp = 1.0
     const val ki = 1.0
     const val kd = 1.0
+
+    const val turnKP = 1.0
+    const val turnKI = 1.0
+    const val turnKD = 1.0
 }

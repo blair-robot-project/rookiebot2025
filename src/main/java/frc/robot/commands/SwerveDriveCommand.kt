@@ -15,6 +15,6 @@ class SwerveDriveCommand(
     }
 
     override fun execute() {
-        drive.setSpeeds(driverController.leftY,driverController.leftX,driverController.rightX)
+        drive.setSpeeds(driverController.leftX,driverController.leftY,driverController.rightX)
     }
 }

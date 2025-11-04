@@ -18,63 +18,92 @@ class SwerveDriveSubsytem(
     val ahrs : AHRS
 ) : SubsystemBase() {
     val flController = PIDController(SwerveDriveConstants.kp,SwerveDriveConstants.ki,SwerveDriveConstants.kd)
+    val fltController = PIDController(SwerveDriveConstants.turnKP, SwerveDriveConstants.turnKI, SwerveDriveConstants.turnKD)
     val frController = PIDController(SwerveDriveConstants.kp,SwerveDriveConstants.ki,SwerveDriveConstants.kd)
+    val frtController = PIDController(SwerveDriveConstants.turnKP, SwerveDriveConstants.turnKI, SwerveDriveConstants.turnKD)
     val blController = PIDController(SwerveDriveConstants.kp,SwerveDriveConstants.ki,SwerveDriveConstants.kd)
+    val bltController = PIDController(SwerveDriveConstants.turnKP, SwerveDriveConstants.turnKI, SwerveDriveConstants.turnKD)
     val brController = PIDController(SwerveDriveConstants.kp,SwerveDriveConstants.ki,SwerveDriveConstants.kd)
-
+    val brtController = PIDController(SwerveDriveConstants.turnKP,SwerveDriveConstants.turnKI, SwerveDriveConstants.turnKD)
     val m_kinematics = SwerveDriveKinematics(
         SwerveDriveConstants.m_frontLeftLocation,
         SwerveDriveConstants.m_frontRightLocation,
         SwerveDriveConstants.m_backLeftLocation,
         SwerveDriveConstants.m_backRightLocation
     )
-
+    val driveMotorConfig = SparkMaxConfig()
+    val turnMotorConfig = SparkMaxConfig()
     val frontLeftMotor = SparkMax(SwerveDriveConstants.frontLeftMotorID, SparkLowLevel.MotorType.kBrushless)
-    val frontLeftMotorConfigure = SparkMaxConfig()
+    val frontLeftTurnMotor = SparkMax(SwerveDriveConstants.frontLeftMotorID, SparkLowLevel.MotorType.kBrushless)
     val frontRightMotor = SparkMax(SwerveDriveConstants.frontRightMotorID,SparkLowLevel.MotorType.kBrushless)
-    val frontRightMotorConfigure = SparkMaxConfig()
+    val frontRightTurnMotor = SparkMax(SwerveDriveConstants.frontRightMotorID,SparkLowLevel.MotorType.kBrushless)
     val backLeftMotor = SparkMax(SwerveDriveConstants.backLeftMotorID, SparkLowLevel.MotorType.kBrushless)
-    val backLeftMotorConfigure = SparkMaxConfig()
+    val backLeftTurnMotor = SparkMax(SwerveDriveConstants.backLeftMotorID, SparkLowLevel.MotorType.kBrushless)
     val backRightMotor = SparkMax(SwerveDriveConstants.backRightMotorID, SparkLowLevel.MotorType.kBrushless)
-    val backRightMotorConfigure = SparkMaxConfig()
+    val backRightTurnMotor = SparkMax(SwerveDriveConstants.backRightMotorID, SparkLowLevel.MotorType.kBrushless)
     init {
-        frontLeftMotorConfigure.smartCurrentLimit(80)
-        frontLeftMotorConfigure.inverted(false)
-        frontLeftMotorConfigure.idleMode(SparkBaseConfig.IdleMode.kBrake)
-        frontLeftMotor.configure(frontRightMotorConfigure,
+        driveMotorConfig.smartCurrentLimit(80)
+        driveMotorConfig.inverted(false)
+        driveMotorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake)
+        frontLeftMotor.configure(
+            driveMotorConfig,
             SparkBase.ResetMode.kResetSafeParameters,
-            SparkBase.PersistMode.kPersistParameters)
+            SparkBase.PersistMode.kPersistParameters
+        )
+        frontRightMotor.configure(
+            driveMotorConfig,
+            SparkBase.ResetMode.kResetSafeParameters,
+            SparkBase.PersistMode.kPersistParameters
+        )
+        backLeftMotor.configure(
+            driveMotorConfig,
+            SparkBase.ResetMode.kResetSafeParameters,
+            SparkBase.PersistMode.kPersistParameters
+        )
+        backRightMotor.configure(
+            driveMotorConfig,
+            SparkBase.ResetMode.kResetSafeParameters,
+            SparkBase.PersistMode.kPersistParameters
+        )
 
-        frontRightMotorConfigure.smartCurrentLimit(80)
-        frontRightMotorConfigure.inverted(false)
-        frontRightMotorConfigure.idleMode(SparkBaseConfig.IdleMode.kBrake)
-        frontRightMotor.configure(frontRightMotorConfigure,
-            SparkBase.ResetMode.kResetSafeParameters,
-            SparkBase.PersistMode.kPersistParameters)
+        turnMotorConfig.smartCurrentLimit(80)
+        turnMotorConfig.inverted(false)
+        turnMotorConfig.idleMode(SparkBaseConfig.IdleMode.kCoast)
 
-        backLeftMotorConfigure.smartCurrentLimit(80)
-        backLeftMotorConfigure.inverted(false)
-        backLeftMotorConfigure.idleMode(SparkBaseConfig.IdleMode.kBrake)
-        backLeftMotor.configure(backLeftMotorConfigure,
+        frontLeftTurnMotor.configure(
+            turnMotorConfig,
             SparkBase.ResetMode.kResetSafeParameters,
-            SparkBase.PersistMode.kPersistParameters)
-
-        backRightMotorConfigure.smartCurrentLimit(80)
-        backRightMotorConfigure.inverted(false)
-        backRightMotorConfigure.idleMode(SparkBaseConfig.IdleMode.kBrake)
-        backRightMotor.configure(backRightMotorConfigure,
+            SparkBase.PersistMode.kPersistParameters
+        )
+        frontRightTurnMotor.configure(
+            turnMotorConfig,
             SparkBase.ResetMode.kResetSafeParameters,
-            SparkBase.PersistMode.kPersistParameters)
+            SparkBase.PersistMode.kPersistParameters
+        )
+        backLeftTurnMotor.configure(
+            turnMotorConfig,
+            SparkBase.ResetMode.kResetSafeParameters,
+            SparkBase.PersistMode.kPersistParameters
+        )
+        backRightTurnMotor.configure(
+            turnMotorConfig,
+            SparkBase.ResetMode.kResetSafeParameters,
+            SparkBase.PersistMode.kPersistParameters
+        )
     }
     fun setSpeeds(x: Double, y: Double, omega: Double){
         val desiredChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(x,y,omega, ahrs.rotation2d)
         val moduleStates = m_kinematics.toSwerveModuleStates(desiredChassisSpeeds)
-
-        //val desiredWheelSpeeds = m_kinematics.toWheelSpeeds(desiredChassisSpeeds)
         frontLeftMotor.setVoltage(
             flController.calculate(
                 frontLeftMotor.encoder.velocity / (60 * Constants.OperatorConstants.whellCircumference),
                 moduleStates[0].speedMetersPerSecond
+            )
+        )
+        frontLeftTurnMotor.setVoltage(
+            fltController.calculate(
+                frontLeftTurnMotor.encoder.position,
+                moduleStates[0].angle.rotations,
             )
         )
         frontRightMotor.setVoltage(
@@ -83,10 +112,22 @@ class SwerveDriveSubsytem(
                 moduleStates[1].speedMetersPerSecond
             )
         )
+        frontRightTurnMotor.setVoltage(
+            frtController.calculate(
+                frontRightTurnMotor.encoder.position,
+                moduleStates[1].angle.rotations,
+            )
+        )
         backLeftMotor.setVoltage(
             blController.calculate(
                 backLeftMotor.encoder.velocity / (60 * Constants.OperatorConstants.whellCircumference),
                 moduleStates[2].speedMetersPerSecond
+            )
+        )
+        backLeftTurnMotor.setVoltage(
+            bltController.calculate(
+                backLeftTurnMotor.encoder.position,
+                moduleStates[2].angle.rotations,
             )
         )
         backRightMotor.setVoltage(
@@ -96,6 +137,12 @@ class SwerveDriveSubsytem(
             )
         )
 
+        backRightTurnMotor.setVoltage(
+            brtController.calculate(
+                backRightTurnMotor.encoder.position,
+                moduleStates[3].angle.rotations,
+            )
+        )
 
     }
 }
