@@ -42,7 +42,6 @@ class SwerveDriveSubsytem(
     val backRightMotor = SparkMax(SwerveDriveConstants.backRightMotorID, SparkLowLevel.MotorType.kBrushless)
     val backRightTurnMotor = SparkMax(SwerveDriveConstants.backRightTurnMotorID, SparkLowLevel.MotorType.kBrushless)
 
-    var desiredChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(0.0,0.0,0.0, ahrs.rotation2d)
     init {
 
         driveMotorConfig.smartCurrentLimit(80)
@@ -95,7 +94,7 @@ class SwerveDriveSubsytem(
         )
     }
     fun setSpeeds(x: Double, y: Double, omega: Double){
-        desiredChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(x,y,omega, ahrs.rotation2d)
+        val desiredChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(x,y,omega, ahrs.rotation2d)
         val moduleStates = m_kinematics.toSwerveModuleStates(desiredChassisSpeeds)
         frontLeftMotor.setVoltage(
             flController.calculate(
