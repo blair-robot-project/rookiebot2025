@@ -8,12 +8,12 @@ object SwerveDriveConstants {
     val m_backLeftLocation = Translation2d(0.276225,-0.276225)
     val m_backRightLocation = Translation2d(-0.276225,-0.276225)
 
-    const val frontLeftMotorID = 9
+    const val frontLeftMotorID = 6
     const val frontLeftTurnMotorID = 8
-    const val frontRightMotorID = 11
-    const val frontRightTurnMotorID = 12
-    const val backLeftMotorID = 6
-    const val backLeftTurnMotorID = 10
+    const val frontRightMotorID = 9
+    const val frontRightTurnMotorID = 10
+    const val backLeftMotorID = 11
+    const val backLeftTurnMotorID = 12
     const val backRightMotorID = 5
     const val backRightTurnMotorID = 62
 

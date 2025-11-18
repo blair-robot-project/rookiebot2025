@@ -1,6 +1,7 @@
 package frc.robot
 
 import com.studica.frc.AHRS
+import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.robot.Constants.OperatorConstants
@@ -45,10 +46,10 @@ object RobotContainer
     {
         // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
         Trigger { ExampleSubsystem.exampleCondition() }.onTrue(ExampleCommand())
-
+        Trigger { drive.}.onTrue()
         // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
         // cancelling on release.
         driverController.b().whileTrue(ExampleSubsystem.exampleMethodCommand())
-        driveCommand.schedule()
+
     }
 }
