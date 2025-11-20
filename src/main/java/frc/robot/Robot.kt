@@ -41,7 +41,7 @@ object Robot : TimedRobot()
         HAL.report(tResourceType.kResourceType_Language, tInstances.kLanguage_Kotlin, 0, WPILibVersion.Version)
         // Access the RobotContainer object so that it is initialized. This will perform all our
         // button bindings, and put our autonomous chooser on the dashboard.
-        RobotContainer
+
     }
 
     /**
@@ -90,6 +90,7 @@ object Robot : TimedRobot()
         // This makes sure that the autonomous stops running when teleop starts running. If you want the
         // autonomous to continue until interrupted by another command, remove this line or comment it out.
         autonomousCommand.cancel()
+        RobotContainer.drive.defaultCommand = RobotContainer.driveCommand
     }
 
     /** This method is called periodically during operator control.  */

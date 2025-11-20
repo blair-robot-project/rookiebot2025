@@ -9,7 +9,8 @@ import frc.robot.commands.Autos
 import frc.robot.commands.ExampleCommand
 import frc.robot.subsystems.ExampleSubsystem
 import frc.robot.commands.SwerveDriveCommand
-import frc.robot.subsystems.SwerveDriveSubsytem
+import frc.robot.subsystems.SwerveDrive
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the [Robot]
@@ -26,7 +27,7 @@ object RobotContainer
     // Replace with CommandPS4Controller or CommandJoystick if needed
     private val driverController = CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT)
     private val ahrs = AHRS(AHRS.NavXComType.kUSB1)
-    val drive = SwerveDriveSubsytem(ahrs)
+    val drive = SwerveDrive(ahrs)
     val driveCommand = SwerveDriveCommand(drive,ahrs,driverController)
     init
     {
