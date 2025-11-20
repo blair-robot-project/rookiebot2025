@@ -46,7 +46,6 @@ object RobotContainer
     {
         // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
         Trigger { ExampleSubsystem.exampleCondition() }.onTrue(ExampleCommand())
-        Trigger { drive.}.onTrue()
         // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
         // cancelling on release.
         driverController.b().whileTrue(ExampleSubsystem.exampleMethodCommand())
