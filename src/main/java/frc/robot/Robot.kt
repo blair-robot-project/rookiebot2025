@@ -1,8 +1,11 @@
 package frc.robot
 
+import edu.wpi.first.epilogue.Epilogue
+import edu.wpi.first.epilogue.Logged
 import edu.wpi.first.hal.FRCNetComm.tInstances
 import edu.wpi.first.hal.FRCNetComm.tResourceType
 import edu.wpi.first.hal.HAL
+import edu.wpi.first.wpilibj.DataLogManager
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.util.WPILibVersion
 import edu.wpi.first.wpilibj2.command.Command
@@ -19,7 +22,8 @@ import frc.robot.commands.Autos
  * the `Main.kt` file in the project. (If you use the IDE's Rename or Move refactorings when renaming the
  * object or package, it will get changed everywhere.)
  */
-object Robot : TimedRobot()
+@Logged
+class Robot : TimedRobot()
 {
     /**
      * The autonomous command to run. While a default value is set here,
@@ -27,6 +31,7 @@ object Robot : TimedRobot()
      *the  AutoChooser on the dashboard.
      */
     private var autonomousCommand: Command = Autos.defaultAutonomousCommand
+    private val robotContainer = RobotContainer()
 
     init
     {
@@ -42,6 +47,8 @@ object Robot : TimedRobot()
         // Access the RobotContainer object so that it is initialized. This will perform all our
         // button bindings, and put our autonomous chooser on the dashboard.
 
+        DataLogManager.start()
+        Epilogue.bind(this)
     }
 
     /**
@@ -90,7 +97,7 @@ object Robot : TimedRobot()
         // This makes sure that the autonomous stops running when teleop starts running. If you want the
         // autonomous to continue until interrupted by another command, remove this line or comment it out.
         autonomousCommand.cancel()
-        RobotContainer.drive.defaultCommand = RobotContainer.driveCommand
+        robotContainer.drive.defaultCommand = robotContainer.driveCommand
     }
 
     /** This method is called periodically during operator control.  */

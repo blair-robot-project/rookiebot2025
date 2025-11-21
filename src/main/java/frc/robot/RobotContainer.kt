@@ -1,6 +1,7 @@
 package frc.robot
 
 import com.studica.frc.AHRS
+import edu.wpi.first.epilogue.Logged
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.button.Trigger
@@ -22,11 +23,13 @@ import frc.robot.subsystems.SwerveDrive
  * to the various subsystems in this container to pass into to commands. The commands can just
  * directly reference the (single instance of the) object.
  */
-object RobotContainer
+@Logged
+class RobotContainer ()
 {
     // Replace with CommandPS4Controller or CommandJoystick if needed
-    private val driverController = CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT)
-    private val ahrs = AHRS(AHRS.NavXComType.kUSB1)
+    val driverController = CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT)
+    val ahrs = AHRS(AHRS.NavXComType.kUSB1)
+    @Logged
     val drive = SwerveDrive(ahrs)
     val driveCommand = SwerveDriveCommand(drive,ahrs,driverController)
     init
