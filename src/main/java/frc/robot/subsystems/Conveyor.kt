@@ -15,7 +15,9 @@ import au.grapplerobotics.LaserCan
 import au.grapplerobotics.simulation.MockLaserCan
 
 class Conveyor (
+
     private val conveyorSensor: LaserCanInterface,
+
 )   : SubsystemBase(){
     private val sensors =
         listOf(
