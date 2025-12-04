@@ -1,5 +1,6 @@
 package frc.robot
 
+import choreo.auto.AutoChooser
 import edu.wpi.first.hal.FRCNetComm.tInstances
 import edu.wpi.first.hal.FRCNetComm.tResourceType
 import edu.wpi.first.hal.HAL
@@ -7,7 +8,11 @@ import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.util.WPILibVersion
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
-import frc.robot.commands.Autos
+import frc.robot.RobotContainer.drive
+import frc.robot.auto.Auto
+import frc.robot.auto.Routines
+//import frc.robot.commands.Autos
+import frc.robot.subsystems.SwerveDriveSubsytem
 
 /**
  * The functions in this object (which basically functions as a singleton class) are called automatically
@@ -26,10 +31,18 @@ object Robot : TimedRobot()
      * the [autonomousInit] method will set it to the value selected in
      *the  AutoChooser on the dashboard.
      */
-    private var autonomousCommand: Command = Autos.defaultAutonomousCommand
+    //private var autonomousCommand: Command = Auto.defaultAutonomousCommand
+    val routines = Routines(Robot, drive)
 
+    val autoChooser = AutoChooser()
     init
     {
+        routines.addOptions(autoChooser)
+        routines.addOptions(autoChooser)
+        routines.addOptions(autoChooser)
+        routines.addOptions(autoChooser)
+
+
         // Kotlin initializer block, which effectually serves as the constructor code.
         // https://kotlinlang.org/docs/classes.html#constructors
         // This work can also be done in the inherited `robotInit()` method. But as of the 2025 season the 
@@ -76,8 +89,8 @@ object Robot : TimedRobot()
     {
         // We store the command as a Robot property in the rare event that the selector on the dashboard
         // is modified while the command is running since we need to access it again in teleopInit()
-        autonomousCommand = Autos.selectedAutonomousCommand
-        autonomousCommand.schedule()
+        //autonomousCommand = Autos.selectedAutonomousCommand
+        //autonomousCommand.schedule()
     }
 
     /** This method is called periodically during autonomous.  */
@@ -89,7 +102,7 @@ object Robot : TimedRobot()
     {
         // This makes sure that the autonomous stops running when teleop starts running. If you want the
         // autonomous to continue until interrupted by another command, remove this line or comment it out.
-        autonomousCommand.cancel()
+        //autonomousCommand.cancel()
     }
 
     /** This method is called periodically during operator control.  */

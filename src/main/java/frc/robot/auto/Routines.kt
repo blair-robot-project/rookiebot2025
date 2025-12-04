@@ -67,4 +67,58 @@ class Routines (
 
          return routine
     }
+    fun bTaxi(): AutoRoutine {
+        val routine: AutoRoutine = autoFactory.newRoutine("bTaxi")
+        val bTaxiTrajectory: AutoTrajectory = routine.
+    }
+    fun positionOneRed(): AutoRoutine {
+        val routine: AutoRoutine = autoFactory.newRoutine ("positionOneRed")
+        val pOneRedTrajectory: AutoTrajectory = routine.trajectory("1s(r)")
+        routine.active().onTrue(
+            Commands.sequence(
+                //conveyorClass.functionThatShoots
+                pOneRedTrajectory.resetOdometry(),
+                pOneRedTrajectory.cmd())
+                //swerveClass.functionThatStops
+        )
+        return routine
+    }
+
+    fun positionTwoRed(): AutoRoutine {
+        val routine: AutoRoutine = autoFactory.newRoutine("positionTwoRed")
+        val pTwoRedTrajectory: AutoTrajectory = routine.trajectory("2s(r)")
+        routine.active().onTrue(
+            Commands.sequence(
+                //conveyorClass.functionThatShoots
+                pTwoRedTrajectory.resetOdometry(),
+                pTwoRedTrajectory.cmd()
+                //swerveClass.functionThatStops
+            )
+        )
+        return routine
+    }
+
+    fun rTaxi(): AutoRoutine {
+        val routine: AutoRoutine = autoFactory.newRoutine("positionTwoRedShooterFail")
+        val rTaxiTrajectory: AutoTrajectory = routine.trajectory("2s(r)")
+        routine.active().onTrue(
+            Commands.sequence(
+                rTaxiTrajectory.resetOdometry(),
+                rTaxiTrajectory.cmd()
+            )
+        )
+    }
+    fun doNothing(): AutoRoutine {
+        val nothing: AutoRoutine = autoFactory.newRoutine("Nothing")
+        return nothing
+    }
+
+    fun addOptions(autoChooser: AutoChooser) {
+        autoChooser.addRoutine("tbd", this::positionOneRed)
+        autoChooser.addRoutine("tbd", this::positionTwoRed)
+        autoChooser.addRoutine("tbd", this::positionOneBlue)
+        autoChooser.addRoutine("tbd", this::doNothing)
+    }
 }
+
+
