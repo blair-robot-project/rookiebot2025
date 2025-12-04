@@ -96,15 +96,11 @@ class SwerveDrive(
     init {
 
         driveMotorConfig.smartCurrentLimit(80)
-        driveMotorConfig.inverted(false)
+        driveMotorConfig.inverted(true)
         driveMotorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake)
         driveMotorConfig.encoder.positionConversionFactor(SwerveDriveConstants.Drive_Gearing * Constants.OperatorConstants.whellCircumference)
         driveMotorConfig.encoder.velocityConversionFactor(SwerveDriveConstants.Drive_Gearing * Constants.OperatorConstants.whellCircumference / 60)
-        frontLeft.drive.configure(
-            driveMotorConfig,
-            SparkBase.ResetMode.kResetSafeParameters,
-            SparkBase.PersistMode.kPersistParameters
-        )
+
         frontRight.drive.configure(
             driveMotorConfig,
             SparkBase.ResetMode.kResetSafeParameters,
@@ -116,6 +112,14 @@ class SwerveDrive(
             SparkBase.PersistMode.kPersistParameters
         )
         backRight.drive.configure(
+            driveMotorConfig,
+            SparkBase.ResetMode.kResetSafeParameters,
+            SparkBase.PersistMode.kPersistParameters
+        )
+        //front right isn't inverted.
+        driveMotorConfig.inverted(false)
+
+        frontRight.drive.configure(
             driveMotorConfig,
             SparkBase.ResetMode.kResetSafeParameters,
             SparkBase.PersistMode.kPersistParameters
@@ -158,7 +162,9 @@ class SwerveDrive(
         backLeft.setState(moduleStates[2])
         backRight.setState(moduleStates[3])
     }
+
     var robotPosition = Pose2d()
+
     override fun simulationPeriodic() {
         periodic()
         val robotSpeed: ChassisSpeeds = m_kinematics.toChassisSpeeds(frontLeft.getState(),frontRight.getState(),backLeft.getState(),backRight.getState())

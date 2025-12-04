@@ -28,10 +28,17 @@ class RobotContainer ()
 {
     // Replace with CommandPS4Controller or CommandJoystick if needed
     val driverController = CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT)
-    val ahrs = AHRS(AHRS.NavXComType.kUSB1)
+
+    val ahrs = AHRS(AHRS.NavXComType.kMXP_SPI)
+
+    @get:Logged
+    val gyro_angle: Double
+            get() = ahrs.rotation2d.rotations
+
     @Logged
     val drive = SwerveDrive(ahrs)
     val driveCommand = SwerveDriveCommand(drive,ahrs,driverController)
+
     init
     {
         configureBindings()

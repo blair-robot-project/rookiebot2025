@@ -18,7 +18,8 @@ class SwerveDriveCommand(
     override fun execute() {
         drive.setSpeeds(
             driverController.leftX * SwerveDriveConstants.maxVelocity,
-            driverController.leftY,
-            driverController.rightX)
+            driverController.leftY * SwerveDriveConstants.maxVelocity,
+            driverController.rightX * SwerveDriveConstants.maxRotationalSpeed
+        )
     }
 }

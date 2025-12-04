@@ -10,6 +10,7 @@ object SwerveDriveConstants {
     val m_backRightLocation = Translation2d(-0.276225,-0.276225)
 
     const val maxVelocity = 3.0
+    const val maxRotationalSpeed = 5.0
 
     const val Drive_Gearing = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0)
 
@@ -24,23 +25,23 @@ object SwerveDriveConstants {
     const val backLeftMotorID = 11
     const val backLeftTurnMotorID = 12
     const val backLeftAbsoluteEncoderID = 6
-    val backLeftOffset = Units.radiansToRotations(1.290)
+    val backLeftOffset = 0.209
     const val backRightMotorID = 5
     const val backRightTurnMotorID = 62
     const val backRightAbsoluteEncoderID = 9
-    val backRightOffset = Units.radiansToRotations(0.815)
+    val backRightOffset = 0.374
 
     // All lines before aren't fnialized
-    const val kp = 1.0
+    const val kp = 0.75
     const val ki = 0.0
     const val kd = 0.0
 
-    const val turnKP = 1.0
+    const val turnKP = 0.5
     const val turnKI = 0.0
     const val turnKD = 0.0
 
 
-    const val kS = 1.0
-    const val kV = 1.0
-    const val kA = 1.0
+    const val kS = 0.15
+    const val kV = 2.4
+    const val kA = 0.47044
  }

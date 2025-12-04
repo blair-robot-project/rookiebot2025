@@ -46,7 +46,11 @@ class SwerveModules(
         turn.setVoltage(
             pidTurn.calculate(
                 position,
-                moduleState.angle.rotations,
+                MathUtil.inputModulus(
+                    moduleState.angle.rotations,
+                    0.0,
+                    1.0,
+                ),
             )
         )
     }
