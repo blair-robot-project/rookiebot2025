@@ -9,6 +9,7 @@ import frc.robot.commands.ExampleCommand
 import frc.robot.subsystems.ExampleSubsystem
 import frc.robot.commands.SwerveDriveCommand
 import frc.robot.subsystems.SwerveDriveSubsytem
+import frc.robot.auto.Auto
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the [Robot]
@@ -27,6 +28,8 @@ object RobotContainer
     private val ahrs = AHRS(AHRS.NavXComType.kUSB1)
     val drive = SwerveDriveSubsytem(ahrs)
     val driveCommand = SwerveDriveCommand(drive,ahrs,driverController)
+    val auto = Auto()
+
     init
     {
         configureBindings()
