@@ -8,14 +8,17 @@ import com.studica.frc.AHRS
 import edu.wpi.first.epilogue.Logged
 import edu.wpi.first.epilogue.NotLogged
 import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveModuleState
+import edu.wpi.first.wpilibj.DigitalSource
 import edu.wpi.first.wpilibj.DutyCycle
 import edu.wpi.first.wpilibj.DutyCycleEncoder
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.robot.Constants
 import frc.robot.subsystems.constants.SwerveDriveConstants
 
 @Logged
@@ -41,7 +44,12 @@ class SwerveDrive(
         PIDController(SwerveDriveConstants.kp,SwerveDriveConstants.ki,SwerveDriveConstants.kd),
         PIDController(SwerveDriveConstants.turnKP,SwerveDriveConstants.turnKI, SwerveDriveConstants.turnKD),
         DutyCycleEncoder(SwerveDriveConstants.frontLeftAbsoluteEncoderID),
-        0.0
+        SwerveDriveConstants.frontLeftOffset,
+        SimpleMotorFeedforward(
+            SwerveDriveConstants.kS,
+            SwerveDriveConstants.kV,
+            SwerveDriveConstants.kA
+        )
 
     )
     val frontRight = SwerveModules(
@@ -50,7 +58,12 @@ class SwerveDrive(
         PIDController(SwerveDriveConstants.kp,SwerveDriveConstants.ki,SwerveDriveConstants.kd),
         PIDController(SwerveDriveConstants.turnKP, SwerveDriveConstants.turnKI, SwerveDriveConstants.turnKD),
         DutyCycleEncoder(SwerveDriveConstants.frontRightAbsoluteEncoderID),
-        0.0
+        SwerveDriveConstants.frontRightOffset,
+        SimpleMotorFeedforward(
+            SwerveDriveConstants.kS,
+            SwerveDriveConstants.kV,
+            SwerveDriveConstants.kA
+        )
     )
     val backLeft = SwerveModules(
         SparkMax(SwerveDriveConstants.backLeftMotorID,SparkLowLevel.MotorType.kBrushless),
@@ -58,7 +71,12 @@ class SwerveDrive(
         PIDController(SwerveDriveConstants.kp,SwerveDriveConstants.ki,SwerveDriveConstants.kd),
         PIDController(SwerveDriveConstants.turnKP, SwerveDriveConstants.turnKI, SwerveDriveConstants.turnKD),
         DutyCycleEncoder(SwerveDriveConstants.backLeftAbsoluteEncoderID),
-        0.0
+        SwerveDriveConstants.backLeftOffset,
+        SimpleMotorFeedforward(
+            SwerveDriveConstants.kS,
+            SwerveDriveConstants.kV,
+            SwerveDriveConstants.kA
+        )
     )
     val backRight = SwerveModules(
         SparkMax(SwerveDriveConstants.backRightMotorID,SparkLowLevel.MotorType.kBrushless),
@@ -66,7 +84,12 @@ class SwerveDrive(
         PIDController(SwerveDriveConstants.kp,SwerveDriveConstants.ki,SwerveDriveConstants.kd),
         PIDController(SwerveDriveConstants.turnKP, SwerveDriveConstants.turnKI, SwerveDriveConstants.turnKD),
         DutyCycleEncoder(SwerveDriveConstants.backRightAbsoluteEncoderID),
-        0.0
+        SwerveDriveConstants.backRightOffset,
+        SimpleMotorFeedforward(
+            SwerveDriveConstants.kS,
+            SwerveDriveConstants.kV,
+            SwerveDriveConstants.kA
+        )
     )
 
     var moduleStates : Array<SwerveModuleState> = arrayOf(SwerveModuleState(),SwerveModuleState(),SwerveModuleState(),SwerveModuleState())
@@ -75,7 +98,8 @@ class SwerveDrive(
         driveMotorConfig.smartCurrentLimit(80)
         driveMotorConfig.inverted(false)
         driveMotorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake)
-        driveMotorConfig.encoder.positionConversionFactor(SwerveDriveConstants.Drive_Gearing)
+        driveMotorConfig.encoder.positionConversionFactor(SwerveDriveConstants.Drive_Gearing * Constants.OperatorConstants.whellCircumference)
+        driveMotorConfig.encoder.velocityConversionFactor(SwerveDriveConstants.Drive_Gearing * Constants.OperatorConstants.whellCircumference / 60)
         frontLeft.drive.configure(
             driveMotorConfig,
             SparkBase.ResetMode.kResetSafeParameters,
@@ -139,9 +163,9 @@ class SwerveDrive(
         periodic()
         val robotSpeed: ChassisSpeeds = m_kinematics.toChassisSpeeds(frontLeft.getState(),frontRight.getState(),backLeft.getState(),backRight.getState())
         robotPosition=Pose2d(
-        robotPosition.x+robotSpeed.vxMetersPerSecond*0.02,
-        robotPosition.y+robotSpeed.vyMetersPerSecond*0.02,
-        robotPosition.rotation+  Rotation2d(robotSpeed.omegaRadiansPerSecond*0.02)
+            robotPosition.x+robotSpeed.vxMetersPerSecond*0.02,
+            robotPosition.y+robotSpeed.vyMetersPerSecond*0.02,
+        robotPosition.rotation+Rotation2d(robotSpeed.omegaRadiansPerSecond*0.02)
         )
     }
 

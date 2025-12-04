@@ -7,6 +7,8 @@ import edu.wpi.first.hal.FRCNetComm.tResourceType
 import edu.wpi.first.hal.HAL
 import edu.wpi.first.wpilibj.DataLogManager
 import edu.wpi.first.wpilibj.TimedRobot
+import edu.wpi.first.wpilibj.smartdashboard.Field2d
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj.util.WPILibVersion
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
@@ -118,6 +120,7 @@ class Robot : TimedRobot()
 
     }
 
+    var field: Field2d = Field2d()
     /** This method is called once when the robot is first started up.  */
     override fun simulationInit()
     {
@@ -127,6 +130,7 @@ class Robot : TimedRobot()
     /** This method is called periodically whilst in simulation.  */
     override fun simulationPeriodic()
     {
-
+        field.robotPose = robotContainer.drive.robotPosition
+        SmartDashboard.putData("Field", field)
     }
 }
