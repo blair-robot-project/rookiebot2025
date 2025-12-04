@@ -13,6 +13,8 @@ import frc.robot.subsystems.Conveyor.ConveyorConstants.CONVEYOR_ID
 import au.grapplerobotics.interfaces.LaserCanInterface
 import au.grapplerobotics.LaserCan
 import au.grapplerobotics.simulation.MockLaserCan
+import edu.wpi.first.wpilibj2.command.Command
+import frc.robot.RobotContainer
 
 class Conveyor (
 
@@ -53,14 +55,12 @@ class Conveyor (
         //config.inverted(True)
         conveyor.configure(config,SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters)
     }
-    //Movement measured in voltage
-    fun move(volt:Double){
-        return conveyor.setVoltage(volt)
-    }
+
 
     //Stops motor
-    fun stop(){
-        return conveyor.setVoltage(0.0)
+    fun stop(): Command=runOnce{
+        conveyor.setVoltage(0.0)
+        conveyor2.setVoltage(0.0)
     }
     private fun laserCanDetected(laserCan: LaserCanInterface): Boolean {
         val measurement = laserCan.measurement
@@ -73,4 +73,13 @@ class Conveyor (
     fun footballDetected(): Boolean = laserCanDetected(conveyorSensor)
 
     fun footBallNotDetected(): Boolean = !footballDetected()
+    //Movement measured in voltage
+    fun move(volt:Double): Command = runOnce{
+        conveyor.setVoltage(volt)
+        conveyor2.setVoltage(volt)
+    }
+    fun runDetect(volt:Double): Command=runOnce{
+        move(volt).onlyIf { footBallNotDetected() }.andThen(stop())
+
+    }
 }
