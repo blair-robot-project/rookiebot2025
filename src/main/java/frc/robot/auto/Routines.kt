@@ -58,19 +58,43 @@ class Routines (
     // Routine for position one blue team
      fun positionOneBlue(): AutoRoutine {
          val routine: AutoRoutine = autoFactory.newRoutine("positionOneBlue")
-
+        val pOneBlueTrajectory = routine.trajectory("1s(b)")
          routine.active().onTrue(
              Commands.sequence(
-
+                 //shooterClass.functionThatShoots
+                 pOneBlueTrajectory.resetOdometry(),
+                 pOneBlueTrajectory.cmd()
              )
          )
-
          return routine
     }
+
+    fun positionTwoBlue(): AutoRoutine {
+        val routine: AutoRoutine = autoFactory.newRoutine("positionTwoBlue")
+        val pTwoBlueTrajectory = routine.trajectory("2s(b)")
+        routine.active().onTrue(
+            Commands.sequence(
+                //shooterClass.functionThatShoots
+                pTwoBlueTrajectory.resetOdometry(),
+                pTwoBlueTrajectory.cmd(),
+                //swerveClass.functionThatStops
+            )
+        )
+        return routine
+    }
+
     fun bTaxi(): AutoRoutine {
         val routine: AutoRoutine = autoFactory.newRoutine("bTaxi")
-        val bTaxiTrajectory: AutoTrajectory = routine.
+        val rTaxiTrajectory: AutoTrajectory = routine.trajectory("2s(b)")
+        routine.active().onTrue(
+            Commands.sequence(
+                rTaxiTrajectory.resetOdometry(),
+                rTaxiTrajectory.cmd()
+            )
+        )
+        return routine
     }
+
     fun positionOneRed(): AutoRoutine {
         val routine: AutoRoutine = autoFactory.newRoutine ("positionOneRed")
         val pOneRedTrajectory: AutoTrajectory = routine.trajectory("1s(r)")
@@ -107,6 +131,16 @@ class Routines (
                 rTaxiTrajectory.cmd()
             )
         )
+        return routine
+    }
+    fun justShoot(): AutoRoutine {
+        val routine: AutoRoutine = autoFactory.newRoutine("justShoot")
+        routine.active().onTrue(
+            Commands.sequence(
+                //shooterClass.functionThatShoots
+            )
+        )
+        return routine
     }
     fun doNothing(): AutoRoutine {
         val nothing: AutoRoutine = autoFactory.newRoutine("Nothing")
@@ -114,10 +148,14 @@ class Routines (
     }
 
     fun addOptions(autoChooser: AutoChooser) {
-        autoChooser.addRoutine("tbd", this::positionOneRed)
-        autoChooser.addRoutine("tbd", this::positionTwoRed)
-        autoChooser.addRoutine("tbd", this::positionOneBlue)
-        autoChooser.addRoutine("tbd", this::doNothing)
+        autoChooser.addRoutine("P1 blue taxi", this::positionOneBlue)
+        autoChooser.addRoutine("P2 blue taxi", this::positionTwoBlue)
+        autoChooser.addRoutine("just blue taxi", this::bTaxi)
+        autoChooser.addRoutine("P1 red taxi", this::positionOneRed)
+        autoChooser.addRoutine("P2 red taxi", this::positionTwoRed)
+        autoChooser.addRoutine("just red taxi", this::rTaxi)
+        autoChooser.addRoutine("just shoot", this::justShoot)
+        autoChooser.addRoutine("do nothing", this::doNothing)
     }
 }
 

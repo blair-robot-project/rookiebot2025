@@ -38,9 +38,6 @@ object Robot : TimedRobot()
     init
     {
         routines.addOptions(autoChooser)
-        routines.addOptions(autoChooser)
-        routines.addOptions(autoChooser)
-        routines.addOptions(autoChooser)
 
 
         // Kotlin initializer block, which effectually serves as the constructor code.
