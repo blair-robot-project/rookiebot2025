@@ -28,7 +28,6 @@ class RobotContainer ()
 {
     // Replace with CommandPS4Controller or CommandJoystick if needed
     val driverController = CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT)
-
     val ahrs = AHRS(AHRS.NavXComType.kMXP_SPI)
 
     @Logged

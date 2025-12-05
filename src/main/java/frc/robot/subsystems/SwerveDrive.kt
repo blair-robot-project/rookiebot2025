@@ -90,6 +90,7 @@ class SwerveDrive(
         )
     )
 
+    @Logged
     var moduleStates: Array<SwerveModuleState> = arrayOf(
         SwerveModuleState(),
         SwerveModuleState(),
@@ -109,20 +110,19 @@ class SwerveDrive(
             SparkBase.ResetMode.kResetSafeParameters,
             SparkBase.PersistMode.kPersistParameters
         )
+
+        frontLeft.drive.configure(
+            driveMotorConfig,
+            SparkBase.ResetMode.kResetSafeParameters,
+            SparkBase.PersistMode.kPersistParameters
+        )
+
         backLeft.drive.configure(
             driveMotorConfig,
             SparkBase.ResetMode.kResetSafeParameters,
             SparkBase.PersistMode.kPersistParameters
         )
         backRight.drive.configure(
-            driveMotorConfig,
-            SparkBase.ResetMode.kResetSafeParameters,
-            SparkBase.PersistMode.kPersistParameters
-        )
-        //front right isn't inverted.
-        driveMotorConfig.inverted(false)
-
-        frontRight.drive.configure(
             driveMotorConfig,
             SparkBase.ResetMode.kResetSafeParameters,
             SparkBase.PersistMode.kPersistParameters
@@ -159,10 +159,15 @@ class SwerveDrive(
             x,
             y,
             omega,
-            Rotation2d.fromDegrees(ahrs.fusedHeading.toDouble())
+            Rotation2d.fromDegrees(-ahrs.fusedHeading.toDouble())
         )
 
         moduleStates = kinematics.toSwerveModuleStates(desiredChassisSpeeds)
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(
+            moduleStates,
+            SwerveDriveConstants.maxVelocity
+        )
     }
 
     override fun periodic() {

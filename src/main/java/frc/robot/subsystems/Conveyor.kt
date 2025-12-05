@@ -7,8 +7,7 @@ import com.revrobotics.spark.config.SparkBaseConfig
 import com.revrobotics.spark.config.SparkMaxConfig
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.Constants
-import frc.robot.subsystems.Conveyor.ConveyorConstants
-import frc.robot.subsystems.Conveyor.ConveyorConstants.CONVEYOR_ID
+import frc.robot.subsystems.ConveyorConstants
 
 class Conveyor(): SubsystemBase(){
     val conveyor = SparkMax(ConveyorConstants.CONVEYOR_ID, SparkLowLevel.MotorType.kBrushless)

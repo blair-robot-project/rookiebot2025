@@ -7,11 +7,8 @@ import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.SwerveModuleState
-import edu.wpi.first.math.system.plant.DCMotor
 import edu.wpi.first.wpilibj.DutyCycleEncoder
-import edu.wpi.first.wpilibj.simulation.DCMotorSim
-import frc.robot.Constants
-import kotlin.math.PI
+import kotlin.math.abs
 
 
 @Logged
@@ -31,10 +28,15 @@ class SwerveModules(
     val position: Double
         get() = encoder.get()
 
-    fun setState(moduleState: SwerveModuleState) {
-        moduleState.optimize(Rotation2d.fromRotations(position))
+    @Logged
+    var angleState: Double = 0.0
 
-        moduleState.speedMetersPerSecond *= moduleState.angle.minus(Rotation2d.fromRotations(position)).cos
+    fun setState(moduleState: SwerveModuleState) {
+        val delta: Rotation2d = moduleState.angle.minus(Rotation2d.fromRotations(position))
+        if (abs(delta.degrees) > 100.0) {
+            moduleState.speedMetersPerSecond *= -1.0
+            moduleState.angle = moduleState.angle.rotateBy(Rotation2d.kPi)
+        }
 
         drive.setVoltage(
             pidDrive.calculate(
@@ -45,14 +47,16 @@ class SwerveModules(
             )
         )
 
+        angleState = MathUtil.inputModulus(
+            moduleState.angle.rotations,
+            0.0,
+            1.0,
+        )
+
         turn.setVoltage(
             pidTurn.calculate(
                 position,
-                MathUtil.inputModulus(
-                    moduleState.angle.rotations,
-                    0.0,
-                    1.0,
-                ),
+                angleState
             )
         )
     }

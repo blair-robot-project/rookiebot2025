@@ -2,6 +2,7 @@ package frc.robot.subsystems.constants
 
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.util.Units
+import kotlin.math.PI
 
 object SwerveDriveConstants {
     val m_frontLeftLocation = Translation2d(0.276225,0.276225)
@@ -10,7 +11,7 @@ object SwerveDriveConstants {
     val m_backRightLocation = Translation2d(-0.276225,-0.276225)
 
     const val maxVelocity = 3.0 // m/s
-    const val maxRotationalSpeed = 5.0 // rad/s
+    const val maxRotationalSpeed = 2 * PI // rad/s
 
     const val Drive_Gearing = (14.0 / 50.0) * (28.0 / 16.0) * (15.0 / 45.0) // L3
 
@@ -39,7 +40,7 @@ object SwerveDriveConstants {
     const val ki = 0.0
     const val kd = 0.0
 
-    const val turnKP = 0.5
+    const val turnKP = 3.0
     const val turnKI = 0.0
     const val turnKD = 0.0
 
