@@ -31,13 +31,9 @@ class RobotContainer ()
 
     val ahrs = AHRS(AHRS.NavXComType.kMXP_SPI)
 
-    @get:Logged
-    val gyro_angle: Double
-            get() = ahrs.rotation2d.rotations
-
     @Logged
     val drive = SwerveDrive(ahrs)
-    val driveCommand = SwerveDriveCommand(drive,ahrs,driverController)
+    val driveCommand = SwerveDriveCommand(drive, driverController)
 
     init
     {

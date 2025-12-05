@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Conveyor
+package frc.robot.subsystems
 
 object ConveyorConstants{
     //ALL PLACEHOLDERS

@@ -21,20 +21,21 @@ class SwerveModules(
     val pidDrive: PIDController,
     val pidTurn: PIDController,
     val encoder: DutyCycleEncoder,
-    val offset: Double,
-    val driveFeedforward : SimpleMotorFeedforward,
+    val driveFeedforward: SimpleMotorFeedforward,
 ) {
-    init {
-        pidTurn.enableContinuousInput(0.0, 2 * PI)
-    }
-    val position: Double
-        get() = MathUtil.inputModulus(
-            encoder.get() - offset,
-            0.0,
-            1.0
-            )
 
-    fun setState(moduleState: SwerveModuleState){
+    init {
+        pidTurn.enableContinuousInput(0.0, 1.0)
+    }
+
+    val position: Double
+        get() = encoder.get()
+
+    fun setState(moduleState: SwerveModuleState) {
+        moduleState.optimize(Rotation2d.fromRotations(position))
+
+        moduleState.speedMetersPerSecond *= moduleState.angle.minus(Rotation2d.fromRotations(position)).cos
+
         drive.setVoltage(
             pidDrive.calculate(
                 drive.encoder.velocity,
@@ -43,6 +44,7 @@ class SwerveModules(
                 moduleState.speedMetersPerSecond
             )
         )
+
         turn.setVoltage(
             pidTurn.calculate(
                 position,
@@ -55,11 +57,10 @@ class SwerveModules(
         )
     }
 
-    // TODO: Use DCMotor to simulate the module motors
-    fun getState(): SwerveModuleState{
+    fun getState(): SwerveModuleState {
         return SwerveModuleState(
-            drive.encoder.velocity/(60 * Constants.OperatorConstants.whellCircumference),
-            Rotation2d(turn.encoder.position)
+            drive.encoder.velocity,
+            Rotation2d.fromRotations(encoder.get())
         )
     }
 }

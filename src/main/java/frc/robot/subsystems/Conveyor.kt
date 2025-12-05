@@ -10,9 +10,7 @@ import frc.robot.Constants
 import frc.robot.subsystems.Conveyor.ConveyorConstants
 import frc.robot.subsystems.Conveyor.ConveyorConstants.CONVEYOR_ID
 
-class Intake (
-
-)   : SubsystemBase(){
+class Conveyor(): SubsystemBase(){
     val conveyor = SparkMax(ConveyorConstants.CONVEYOR_ID, SparkLowLevel.MotorType.kBrushless)
     val config = SparkMaxConfig()
     init{

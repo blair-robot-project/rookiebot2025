@@ -28,7 +28,7 @@ class SwerveDrive(
 
     @get:NotLogged
     @NotLogged
-    val m_kinematics = SwerveDriveKinematics(
+    val kinematics = SwerveDriveKinematics(
         SwerveDriveConstants.m_frontLeftLocation,
         SwerveDriveConstants.m_frontRightLocation,
         SwerveDriveConstants.m_backLeftLocation,
@@ -37,14 +37,13 @@ class SwerveDrive(
 
     val driveMotorConfig = SparkMaxConfig()
     val turnMotorConfig = SparkMaxConfig()
-    //DRive and Turn
+
     val frontLeft = SwerveModules(
         SparkMax(SwerveDriveConstants.frontLeftMotorID, SparkLowLevel.MotorType.kBrushless),
         SparkMax(SwerveDriveConstants.frontLeftTurnMotorID, SparkLowLevel.MotorType.kBrushless),
         PIDController(SwerveDriveConstants.kp,SwerveDriveConstants.ki,SwerveDriveConstants.kd),
         PIDController(SwerveDriveConstants.turnKP,SwerveDriveConstants.turnKI, SwerveDriveConstants.turnKD),
-        DutyCycleEncoder(SwerveDriveConstants.frontLeftAbsoluteEncoderID),
-        SwerveDriveConstants.frontLeftOffset,
+        DutyCycleEncoder(SwerveDriveConstants.frontLeftAbsoluteEncoderID, 1.0, SwerveDriveConstants.frontLeftOffset),
         SimpleMotorFeedforward(
             SwerveDriveConstants.kS,
             SwerveDriveConstants.kV,
@@ -57,34 +56,33 @@ class SwerveDrive(
         SparkMax(SwerveDriveConstants.frontRightTurnMotorID,SparkLowLevel.MotorType.kBrushless),
         PIDController(SwerveDriveConstants.kp,SwerveDriveConstants.ki,SwerveDriveConstants.kd),
         PIDController(SwerveDriveConstants.turnKP, SwerveDriveConstants.turnKI, SwerveDriveConstants.turnKD),
-        DutyCycleEncoder(SwerveDriveConstants.frontRightAbsoluteEncoderID),
-        SwerveDriveConstants.frontRightOffset,
+        DutyCycleEncoder(SwerveDriveConstants.frontRightAbsoluteEncoderID, 1.0, SwerveDriveConstants.frontRightOffset),
         SimpleMotorFeedforward(
             SwerveDriveConstants.kS,
             SwerveDriveConstants.kV,
             SwerveDriveConstants.kA
         )
     )
+
     val backLeft = SwerveModules(
         SparkMax(SwerveDriveConstants.backLeftMotorID,SparkLowLevel.MotorType.kBrushless),
         SparkMax(SwerveDriveConstants.backLeftTurnMotorID,SparkLowLevel.MotorType.kBrushless),
         PIDController(SwerveDriveConstants.kp,SwerveDriveConstants.ki,SwerveDriveConstants.kd),
         PIDController(SwerveDriveConstants.turnKP, SwerveDriveConstants.turnKI, SwerveDriveConstants.turnKD),
-        DutyCycleEncoder(SwerveDriveConstants.backLeftAbsoluteEncoderID),
-        SwerveDriveConstants.backLeftOffset,
+        DutyCycleEncoder(SwerveDriveConstants.backLeftAbsoluteEncoderID, 1.0, SwerveDriveConstants.backLeftOffset),
         SimpleMotorFeedforward(
             SwerveDriveConstants.kS,
             SwerveDriveConstants.kV,
             SwerveDriveConstants.kA
         )
     )
+
     val backRight = SwerveModules(
         SparkMax(SwerveDriveConstants.backRightMotorID,SparkLowLevel.MotorType.kBrushless),
         SparkMax(SwerveDriveConstants.backRightTurnMotorID,SparkLowLevel.MotorType.kBrushless),
         PIDController(SwerveDriveConstants.kp,SwerveDriveConstants.ki,SwerveDriveConstants.kd),
         PIDController(SwerveDriveConstants.turnKP, SwerveDriveConstants.turnKI, SwerveDriveConstants.turnKD),
-        DutyCycleEncoder(SwerveDriveConstants.backRightAbsoluteEncoderID),
-        SwerveDriveConstants.backRightOffset,
+        DutyCycleEncoder(SwerveDriveConstants.backRightAbsoluteEncoderID, 1.0, SwerveDriveConstants.backRightOffset),
         SimpleMotorFeedforward(
             SwerveDriveConstants.kS,
             SwerveDriveConstants.kV,
@@ -92,9 +90,14 @@ class SwerveDrive(
         )
     )
 
-    var moduleStates : Array<SwerveModuleState> = arrayOf(SwerveModuleState(),SwerveModuleState(),SwerveModuleState(),SwerveModuleState())
-    init {
+    var moduleStates: Array<SwerveModuleState> = arrayOf(
+        SwerveModuleState(),
+        SwerveModuleState(),
+        SwerveModuleState(),
+        SwerveModuleState()
+    )
 
+    init {
         driveMotorConfig.smartCurrentLimit(80)
         driveMotorConfig.inverted(true)
         driveMotorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake)
@@ -150,10 +153,16 @@ class SwerveDrive(
             SparkBase.PersistMode.kPersistParameters
         )
     }
-    fun setSpeeds(x: Double, y: Double, omega: Double) : Array<SwerveModuleState>{
-        val desiredChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(x,y,omega, ahrs.rotation2d)
-        moduleStates = m_kinematics.toSwerveModuleStates(desiredChassisSpeeds)
-        return moduleStates
+
+    fun setSpeeds(x: Double, y: Double, omega: Double) {
+        val desiredChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            x,
+            y,
+            omega,
+            Rotation2d.fromDegrees(ahrs.fusedHeading.toDouble())
+        )
+
+        moduleStates = kinematics.toSwerveModuleStates(desiredChassisSpeeds)
     }
 
     override fun periodic() {
@@ -167,7 +176,7 @@ class SwerveDrive(
 
     override fun simulationPeriodic() {
         periodic()
-        val robotSpeed: ChassisSpeeds = m_kinematics.toChassisSpeeds(frontLeft.getState(),frontRight.getState(),backLeft.getState(),backRight.getState())
+        val robotSpeed: ChassisSpeeds = kinematics.toChassisSpeeds(frontLeft.getState(),frontRight.getState(),backLeft.getState(),backRight.getState())
         robotPosition=Pose2d(
             robotPosition.x+robotSpeed.vxMetersPerSecond*0.02,
             robotPosition.y+robotSpeed.vyMetersPerSecond*0.02,
