@@ -1,8 +1,10 @@
 package frc.robot
 
+import au.grapplerobotics.LaserCan
 import com.studica.frc.AHRS
 import edu.wpi.first.epilogue.Logged
 import edu.wpi.first.wpilibj2.command.Commands
+import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.robot.Constants.OperatorConstants
@@ -26,6 +28,8 @@ import frc.robot.subsystems.SwerveDrive
 @Logged
 class RobotContainer ()
 {
+    val conveyor = Conveyor(conveyorSensor = LaserCan(23))
+
     // Replace with CommandPS4Controller or CommandJoystick if needed
     val driverController = CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT)
     val ahrs = AHRS(AHRS.NavXComType.kMXP_SPI)
@@ -55,6 +59,15 @@ class RobotContainer ()
         // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
         // cancelling on release.
         driverController.b().whileTrue(ExampleSubsystem.exampleMethodCommand())
+        //hard
+        driverController.rightTrigger().whileTrue(conveyor.move(5.0))
+        driverController.leftTrigger().whileTrue(conveyor.move(-2.5)) // out take
+        //sensor
+        driverController.rightBumper().whileTrue(conveyor.runDetect(4.0))
+        driverController.leftBumper().whileTrue(conveyor.stop())
+
 
     }
+
+
 }
