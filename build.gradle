@@ -6,6 +6,7 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "2.1.0"
     id "edu.wpi.first.GradleRIO" version "2025.3.2"
     id "idea"
+    id "org.jetbrains.kotlin.kapt" version "2.2.20"
 }
 
 def javaVersion = JavaVersion.VERSION_17
@@ -59,7 +60,7 @@ wpi.java.debugJni = false
 def includeDesktopSupport = false
 
 dependencies {
-    annotationProcessor wpi.java.deps.wpilibAnnotations()
+    kapt wpi.java.deps.wpilibAnnotations()
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
 
