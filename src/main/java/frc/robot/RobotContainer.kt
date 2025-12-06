@@ -12,6 +12,8 @@ import frc.robot.commands.Autos
 import frc.robot.commands.ExampleCommand
 import frc.robot.subsystems.ExampleSubsystem
 import frc.robot.commands.SwerveDriveCommand
+import frc.robot.subsystems.SwerveDriveSubsytem
+import frc.robot.auto.Auto
 import frc.robot.subsystems.Conveyor
 import frc.robot.subsystems.SwerveDrive
 
@@ -32,6 +34,11 @@ class RobotContainer ()
     val conveyor = Conveyor(conveyorSensor = LaserCan(23))
 
     // Replace with CommandPS4Controller or CommandJoystick if needed
+    private val driverController = CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT)
+    private val ahrs = AHRS(AHRS.NavXComType.kUSB1)
+    val drive = SwerveDriveSubsytem(ahrs)
+    val driveCommand = SwerveDriveCommand(drive,ahrs,driverController)
+    val auto = Auto()
     val driverController = CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT)
 
     val ahrs = AHRS(AHRS.NavXComType.kMXP_SPI)
