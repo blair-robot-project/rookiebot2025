@@ -64,6 +64,7 @@ class Routines (
                  //shooterClass.functionThatShoots
                  pOneBlueTrajectory.resetOdometry(),
                  pOneBlueTrajectory.cmd()
+                 //swerveClass.functionThatStops
              )
          )
          return routine
@@ -90,6 +91,7 @@ class Routines (
             Commands.sequence(
                 rTaxiTrajectory.resetOdometry(),
                 rTaxiTrajectory.cmd()
+                //swerveClass.functionThatStops
             )
         )
         return routine
@@ -129,6 +131,7 @@ class Routines (
             Commands.sequence(
                 rTaxiTrajectory.resetOdometry(),
                 rTaxiTrajectory.cmd()
+                //swerveClass.functionThatStops
             )
         )
         return routine
