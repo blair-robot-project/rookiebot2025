@@ -1,6 +1,8 @@
 package frc.robot
 
+import au.grapplerobotics.LaserCan
 import com.studica.frc.AHRS
+import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.robot.Constants.OperatorConstants
@@ -9,6 +11,8 @@ import frc.robot.commands.ExampleCommand
 import frc.robot.subsystems.ExampleSubsystem
 import frc.robot.commands.SwerveDriveCommand
 import frc.robot.subsystems.SwerveDriveSubsytem
+import frc.robot.subsystems.Conveyor
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the [Robot]
@@ -22,6 +26,8 @@ import frc.robot.subsystems.SwerveDriveSubsytem
  */
 object RobotContainer
 {
+    val conveyor = Conveyor(conveyorSensor = LaserCan(23))
+
     // Replace with CommandPS4Controller or CommandJoystick if needed
     private val driverController = CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT)
     private val ahrs = AHRS(AHRS.NavXComType.kUSB1)
@@ -50,5 +56,15 @@ object RobotContainer
         // cancelling on release.
         driverController.b().whileTrue(ExampleSubsystem.exampleMethodCommand())
         driveCommand.schedule()
+        //hard
+        driverController.rightTrigger().whileTrue(conveyor.move(5.0))
+        driverController.leftTrigger().whileTrue(conveyor.move(-2.5)) // out take
+        //sensor
+        driverController.rightBumper().whileTrue(conveyor.runDetect(4.0))
+        driverController.leftBumper().whileTrue(conveyor.stop())
+
+
     }
+
+
 }

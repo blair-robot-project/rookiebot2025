@@ -96,6 +96,7 @@ object Robot : TimedRobot()
     override fun teleopPeriodic()
     {
 
+        System.out.println(RobotContainer.conveyor.footballDetected())
     }
 
     override fun testInit()
