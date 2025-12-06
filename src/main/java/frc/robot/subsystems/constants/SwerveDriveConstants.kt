@@ -12,7 +12,7 @@ object SwerveDriveConstants {
     const val frontLeftTurnMotorID = 8
     const val frontRightMotorID = 11
     const val frontRightTurnMotorID = 12
-    const val backLeftMotorID = 6
+    const val backLeftMotorID = 0
     const val backLeftTurnMotorID = 10
     const val backRightMotorID = 5
     const val backRightTurnMotorID = 62

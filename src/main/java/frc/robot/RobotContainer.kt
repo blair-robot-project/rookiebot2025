@@ -11,7 +11,7 @@ import frc.robot.commands.ExampleCommand
 import frc.robot.subsystems.ExampleSubsystem
 import frc.robot.commands.SwerveDriveCommand
 import frc.robot.subsystems.SwerveDriveSubsytem
-import frc.robot.subsystems.conveyor.Conveyor
+import frc.robot.subsystems.Conveyor
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -26,7 +26,7 @@ import frc.robot.subsystems.conveyor.Conveyor
  */
 object RobotContainer
 {
-    val conveyor = Conveyor(conveyorSensor = LaserCan(1))
+    val conveyor = Conveyor(conveyorSensor = LaserCan(23))
 
     // Replace with CommandPS4Controller or CommandJoystick if needed
     private val driverController = CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT)
@@ -57,9 +57,11 @@ object RobotContainer
         driverController.b().whileTrue(ExampleSubsystem.exampleMethodCommand())
         driveCommand.schedule()
         //hard
-        driverController.rightTrigger().whileTrue(conveyor.move(10.0))
+        driverController.rightTrigger().whileTrue(conveyor.move(5.0))
+        driverController.leftTrigger().whileTrue(conveyor.move(-2.5)) // out take
         //sensor
-        driverController.rightBumper().whileTrue(conveyor.runDetect(10.0))
+        driverController.rightBumper().whileTrue(conveyor.runDetect(4.0))
+        driverController.leftBumper().whileTrue(conveyor.stop())
 
 
     }
