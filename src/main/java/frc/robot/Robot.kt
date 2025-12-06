@@ -105,8 +105,7 @@ class Robot : TimedRobot()
     /** This method is called periodically during operator control.  */
     override fun teleopPeriodic()
     {
-
-        System.out.println(RobotContainer.conveyor.footballDetected())
+//        println(robotContainer.conveyor.footballDetected())
     }
 
     override fun testInit()

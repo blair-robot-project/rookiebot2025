@@ -12,6 +12,7 @@ import frc.robot.commands.Autos
 import frc.robot.commands.ExampleCommand
 import frc.robot.subsystems.ExampleSubsystem
 import frc.robot.commands.SwerveDriveCommand
+import frc.robot.subsystems.Conveyor
 import frc.robot.subsystems.SwerveDrive
 
 /**
@@ -32,7 +33,12 @@ class RobotContainer ()
 
     // Replace with CommandPS4Controller or CommandJoystick if needed
     val driverController = CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT)
+
     val ahrs = AHRS(AHRS.NavXComType.kMXP_SPI)
+
+    @get:Logged
+    val fusedHeading: Double
+        get() = ahrs.fusedHeading.toDouble()
 
     @Logged
     val drive = SwerveDrive(ahrs)
