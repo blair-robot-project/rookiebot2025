@@ -13,6 +13,8 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry
+import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.DigitalSource
 import edu.wpi.first.wpilibj.DutyCycle
@@ -26,17 +28,11 @@ class SwerveDrive(
     val ahrs : AHRS
 ) : SubsystemBase() {
 
-    @get:NotLogged
-    @NotLogged
-    val kinematics = SwerveDriveKinematics(
-        SwerveDriveConstants.m_frontLeftLocation,
-        SwerveDriveConstants.m_frontRightLocation,
-        SwerveDriveConstants.m_backLeftLocation,
-        SwerveDriveConstants.m_backRightLocation
-    )
-
     val driveMotorConfig = SparkMaxConfig()
     val turnMotorConfig = SparkMaxConfig()
+
+    val gyroHeading: Rotation2d
+        get() = Rotation2d.fromDegrees(-ahrs.fusedHeading.toDouble())
 
     val frontLeft = SwerveModules(
         SparkMax(SwerveDriveConstants.frontLeftMotorID, SparkLowLevel.MotorType.kBrushless),
@@ -88,6 +84,21 @@ class SwerveDrive(
             SwerveDriveConstants.kV,
             SwerveDriveConstants.kA
         )
+    )
+
+    @get:NotLogged
+    @NotLogged
+    val kinematics = SwerveDriveKinematics(
+        SwerveDriveConstants.m_frontLeftLocation,
+        SwerveDriveConstants.m_frontRightLocation,
+        SwerveDriveConstants.m_backLeftLocation,
+        SwerveDriveConstants.m_backRightLocation
+    )
+
+    val odometry = SwerveDriveOdometry(
+        kinematics,
+        gyroHeading,
+        arrayOf(frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition())
     )
 
     @Logged
@@ -162,7 +173,7 @@ class SwerveDrive(
                 x,
                 y,
                 omega,
-                Rotation2d.fromDegrees(-ahrs.fusedHeading.toDouble())
+                gyroHeading
             ),
             0.02
         )
@@ -180,10 +191,19 @@ class SwerveDrive(
         backRight.setState(moduleStates[3])
     }
 
-    override fun periodic() {
-    }
-
     var robotPosition = Pose2d()
+
+    override fun periodic() {
+        robotPosition = odometry.update(
+            gyroHeading,
+            arrayOf<SwerveModulePosition>(
+                frontLeft.getPosition(),
+                frontRight.getPosition(),
+                backLeft.getPosition(),
+                backRight.getPosition()
+            )
+        )
+    }
 
     override fun simulationPeriodic() {
         periodic()
@@ -194,7 +214,6 @@ class SwerveDrive(
         robotPosition.rotation+Rotation2d(robotSpeed.omegaRadiansPerSecond*0.02)
         )
     }
-
     companion object {
         fun createSwerveDrive(ahrs: AHRS): SwerveDrive {
             return SwerveDrive(ahrs)

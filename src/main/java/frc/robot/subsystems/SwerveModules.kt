@@ -6,6 +6,7 @@ import edu.wpi.first.math.MathUtil
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.kinematics.SwerveModulePosition
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.units.Units.Rotations
 import edu.wpi.first.wpilibj.DutyCycleEncoder
@@ -61,6 +62,13 @@ class SwerveModules(
     fun getState(): SwerveModuleState {
         return SwerveModuleState(
             drive.encoder.velocity,
+            Rotation2d.fromRotations(encoder.get())
+        )
+    }
+
+    fun getPosition(): SwerveModulePosition {
+        return SwerveModulePosition(
+            drive.encoder.position,
             Rotation2d.fromRotations(encoder.get())
         )
     }
