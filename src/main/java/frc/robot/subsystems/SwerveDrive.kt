@@ -99,6 +99,8 @@ class SwerveDrive(
     )
 
     init {
+        ahrs.reset()
+
         driveMotorConfig.smartCurrentLimit(80)
         driveMotorConfig.inverted(true)
         driveMotorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake)
@@ -129,7 +131,7 @@ class SwerveDrive(
         )
 
         turnMotorConfig.smartCurrentLimit(80)
-        turnMotorConfig.inverted(false)
+        turnMotorConfig.inverted(true)
         turnMotorConfig.idleMode(SparkBaseConfig.IdleMode.kBrake)
 
         frontLeft.turn.configure(
@@ -155,11 +157,14 @@ class SwerveDrive(
     }
 
     fun setSpeeds(x: Double, y: Double, omega: Double) {
-        val desiredChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            x,
-            y,
-            omega,
-            Rotation2d.fromDegrees(-ahrs.fusedHeading.toDouble())
+        val desiredChassisSpeeds = ChassisSpeeds.discretize(
+            ChassisSpeeds.fromFieldRelativeSpeeds(
+                x,
+                y,
+                omega,
+                Rotation2d.fromDegrees(-ahrs.fusedHeading.toDouble())
+            ),
+            0.02
         )
 
         moduleStates = kinematics.toSwerveModuleStates(desiredChassisSpeeds)
@@ -168,13 +173,14 @@ class SwerveDrive(
             moduleStates,
             SwerveDriveConstants.maxVelocity
         )
-    }
 
-    override fun periodic() {
         frontLeft.setState(moduleStates[0])
         frontRight.setState(moduleStates[1])
         backLeft.setState(moduleStates[2])
         backRight.setState(moduleStates[3])
+    }
+
+    override fun periodic() {
     }
 
     var robotPosition = Pose2d()

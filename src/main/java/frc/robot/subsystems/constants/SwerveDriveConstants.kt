@@ -18,22 +18,22 @@ object SwerveDriveConstants {
     const val frontLeftMotorID = 30
     const val frontLeftTurnMotorID = 8
     const val frontLeftAbsoluteEncoderID = 8
-    val frontLeftOffset = Units.radiansToRotations(2.871)
+    val frontLeftOffset = 0.953
 
     const val frontRightMotorID = 9
     const val frontRightTurnMotorID = 10
     const val frontRightAbsoluteEncoderID = 7
-    val frontRightOffset = Units.radiansToRotations(-2.294)
+    val frontRightOffset = 0.131
 
     const val backLeftMotorID = 11
     const val backLeftTurnMotorID = 12
     const val backLeftAbsoluteEncoderID = 6
-    val backLeftOffset = 0.209
+    val backLeftOffset = 0.710
 
     const val backRightMotorID = 5
     const val backRightTurnMotorID = 62
     const val backRightAbsoluteEncoderID = 9
-    val backRightOffset = 0.374
+    val backRightOffset = 0.865
 
     // all lines before aren't finalized
     const val kp = 0.75
@@ -45,6 +45,6 @@ object SwerveDriveConstants {
     const val turnKD = 0.0
 
     const val kS = 0.15
-    const val kV = 2.4
-    const val kA = 0.47044
+    const val kV = 2.36
+    const val kA = 0.33
  }
