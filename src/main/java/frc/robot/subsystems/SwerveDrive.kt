@@ -191,6 +191,10 @@ class SwerveDrive(
         backRight.setState(moduleStates[3])
     }
 
+    fun resetPosition(pos: Pose2d) {
+        odometry.resetPose(pos)
+    }
+
     var robotPosition = Pose2d()
 
     override fun periodic() {

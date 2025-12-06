@@ -5,19 +5,20 @@ import choreo.auto.AutoFactory
 import choreo.auto.AutoRoutine
 import choreo.auto.AutoTrajectory
 import edu.wpi.first.wpilibj2.command.Commands
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import frc.robot.Robot
 import frc.robot.RobotContainer
-import frc.robot.subsystems.SwerveDriveSubsytem
 import edu.wpi.first.math.controller.PIDController
 import frc.robot.subsystems.constants.SwerveDriveConstants
 import choreo.trajectory.SwerveSample
 import edu.wpi.first.math.kinematics.ChassisSpeeds
+import frc.robot.subsystems.Conveyor
+import frc.robot.subsystems.SwerveDrive
 
 
 class Routines (
     val robot: Robot,
-    val drive: SwerveDriveSubsytem,
+    val drive: SwerveDrive,
+    val conveyor: Conveyor
 ) {
 
     // Psuedo PID Controller
@@ -32,42 +33,49 @@ class Routines (
         // Get pose from swerve
 
         val speeds: ChassisSpeeds = ChassisSpeeds(
-            sample.vx + xController.calculate(pose.getX(), sample.x),
-            sample.vy + yController.calculate(pose.getY(), sample.y),
-            sample.omega + headingController.calculate(pose.getRotation().getRadians(), sample.heading)
+                sample.vx + xController.calculate(drive.robotPosition.getX(), sample.x),
+            sample.vy + yController.calculate(drive.robotPosition.getY(), sample.y),
+            sample.omega + headingController.calculate(drive.robotPosition.getRotation().getRadians(), sample.heading),
         )
 
-        val newSpeeds: ChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            speeds,
-            // Robot angle
-        )
+        //val newSpeeds: ChassisSpeeds = ChassisSpeeds
+        //speeds
+        // Robot angle
+        //)
 
         // Apply gen speed
         // Get set fun from swerve set(newSpeeds)
+
+        drive.setSpeeds(
+            speeds.vxMetersPerSecond,
+            speeds.vyMetersPerSecond,
+            speeds.omegaRadiansPerSecond
+        )
     }
 
-
+    //
     private val autoFactory = AutoFactory(
-        null,
-        null,
-        { sample: SwerveSample -> followTrajectory(/*Get Sample*/)},
+        drive::robotPosition,
+        drive::resetPosition,
+        { sample: SwerveSample -> followTrajectory(sample)},
         false,
         drive,
     )
 
     // Routine for position one blue team
-     fun positionOneBlue(): AutoRoutine {
-         val routine: AutoRoutine = autoFactory.newRoutine("positionOneBlue")
+    fun positionOneBlue(): AutoRoutine {
+        val routine: AutoRoutine = autoFactory.newRoutine("positionOneBlue")
         val pOneBlueTrajectory = routine.trajectory("1s(b)")
-         routine.active().onTrue(
-             Commands.sequence(
-                 //shooterClass.functionThatShoots
-                 pOneBlueTrajectory.resetOdometry(),
-                 pOneBlueTrajectory.cmd()
-                 //swerveClass.functionThatStops
-             )
-         )
-         return routine
+        routine.active().onTrue(
+            Commands.sequence(
+                conveyor.move(5.0),
+                pOneBlueTrajectory.resetOdometry(),
+                pOneBlueTrajectory.cmd(),
+                Commands.runOnce({drive.setSpeeds(0.0,0.0,0.0)})
+                //swerveClass.functionThatStops
+            )
+        )
+        return routine
     }
 
     fun positionTwoBlue(): AutoRoutine {
@@ -75,10 +83,10 @@ class Routines (
         val pTwoBlueTrajectory = routine.trajectory("2s(b)")
         routine.active().onTrue(
             Commands.sequence(
-                //shooterClass.functionThatShoots
+                conveyor.move(5.0),
                 pTwoBlueTrajectory.resetOdometry(),
                 pTwoBlueTrajectory.cmd(),
-                //swerveClass.functionThatStops
+                Commands.runOnce({drive.setSpeeds(0.0,0.0,0.0)})
             )
         )
         return routine
@@ -90,8 +98,8 @@ class Routines (
         routine.active().onTrue(
             Commands.sequence(
                 rTaxiTrajectory.resetOdometry(),
-                rTaxiTrajectory.cmd()
-                //swerveClass.functionThatStops
+                rTaxiTrajectory.cmd(),
+                Commands.runOnce({drive.setSpeeds(0.0,0.0,0.0)})
             )
         )
         return routine
@@ -102,10 +110,11 @@ class Routines (
         val pOneRedTrajectory: AutoTrajectory = routine.trajectory("1s(r)")
         routine.active().onTrue(
             Commands.sequence(
-                //conveyorClass.functionThatShoots
+                conveyor.move(5.0),
                 pOneRedTrajectory.resetOdometry(),
-                pOneRedTrajectory.cmd())
-                //swerveClass.functionThatStops
+                pOneRedTrajectory.cmd(),
+                Commands.runOnce({drive.setSpeeds(0.0,0.0,0.0)})
+            )
         )
         return routine
     }
@@ -115,9 +124,10 @@ class Routines (
         val pTwoRedTrajectory: AutoTrajectory = routine.trajectory("2s(r)")
         routine.active().onTrue(
             Commands.sequence(
-                //conveyorClass.functionThatShoots
+                conveyor.move(5.0),
                 pTwoRedTrajectory.resetOdometry(),
-                pTwoRedTrajectory.cmd()
+                pTwoRedTrajectory.cmd(),
+                Commands.runOnce({drive.setSpeeds(0.0,0.0,0.0)})
                 //swerveClass.functionThatStops
             )
         )
@@ -130,7 +140,8 @@ class Routines (
         routine.active().onTrue(
             Commands.sequence(
                 rTaxiTrajectory.resetOdometry(),
-                rTaxiTrajectory.cmd()
+                rTaxiTrajectory.cmd(),
+                Commands.runOnce({drive.setSpeeds(0.0,0.0,0.0)})
                 //swerveClass.functionThatStops
             )
         )
@@ -140,7 +151,7 @@ class Routines (
         val routine: AutoRoutine = autoFactory.newRoutine("justShoot")
         routine.active().onTrue(
             Commands.sequence(
-                //shooterClass.functionThatShoots
+                conveyor.move(5.0),
             )
         )
         return routine
@@ -161,5 +172,3 @@ class Routines (
         autoChooser.addRoutine("do nothing", this::doNothing)
     }
 }
-
-
