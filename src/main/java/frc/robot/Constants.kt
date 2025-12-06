@@ -1,5 +1,8 @@
 package frc.robot
 
+import edu.wpi.first.units.Units.Meters
+import edu.wpi.first.units.Units.Rotation
+
 /*
  * The Constants file provides a convenient place for teams to hold robot-wide
  * numerical or boolean constants. This file should not be used for any other purpose.
@@ -12,7 +15,7 @@ object Constants
     object OperatorConstants
     {
         const val DRIVER_CONTROLLER_PORT = 0
-        const val whellCircumference = 0.2 // Num not finalized
+        const val whellCircumference = 0.319
     }
 }
 
